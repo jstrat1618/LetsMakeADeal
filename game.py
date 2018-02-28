@@ -3,7 +3,22 @@ from actors import Door
 
 
 def main():
-    #print header
+    play_again ='y'
+
+    while play_again in ['y', 'yes']:
+        run_main_loop()
+
+        play_again = input("Would you like to play again? [y/n] ")
+
+        while play_again.lower() not in ['y', 'yes', 'n', 'no']:
+            print('Sorry we didn\'t understand "{}".'.format(play_again))
+            play_again = input("Would you like to play again? [y/n] ")
+
+        play_again = play_again.lower()
+
+
+def run_main_loop():
+    # print header
     print_header()
     #get player name
     name = get_player_name()
