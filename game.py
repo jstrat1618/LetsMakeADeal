@@ -1,5 +1,5 @@
 import random
-from actors import Door
+import actors
 
 
 def main():
@@ -33,14 +33,21 @@ def run_main_loop():
     goat = goats[0]
     print(goat)
     #get remaining doors
-    rmn_door_id = remaining_door_id(first_choice, goat.id, doors)
-    print("Door {} remains".format(rmn_door_id))
+    rmn_door = remaining_door(first_choice, goat, doors)
+
+    print("Door {} remains".format(rmn_door.id))
     #ask play if he/she would like to switch
     answer = decide_to_switch()
+
+    player = actors.Player(name, strategy=answer)
+
     #determine players final choice
-    players_choice_id = players_final_choice(answer, first_choice, rmn_door_id)
-    print("You choice is Door Number {}".format(players_choice_id))
-    final_door = get_final_door(players_choice_id, doors)
+    players_final_choice(player, rmn_door)
+
+    print("You choice is Door Number {}".format(player.choice))
+    final_door = get_final_door(player, doors)
+    #final_door = final_door[0]
+    print()
     print(final_door)
     print_outcome(final_door)
 
@@ -59,9 +66,9 @@ def assign_doors():
     prizes = ['goat', 'goat', 'prize']
     random.shuffle(prizes)
 
-    door1 = Door(1,prizes[0])
-    door2 = Door(2,prizes[1])
-    door3 = Door(3,prizes[2])
+    door1 = actors.Door(1,prizes[0])
+    door2 = actors.Door(2,prizes[1])
+    door3 = actors.Door(3,prizes[2])
 
     return [door1, door2, door3]
 
@@ -86,37 +93,38 @@ def get_goat(goat_doors, first_choice):
 def decide_to_switch():
     answer = 'h'
 
-    while answer not in ['yes', 'y', 'n', 'no']:
+    while answer not in ['yes', 'y', 'n', 'no', 'stay', 'switch']:
         answer = input("Would you like to switch [Y]/[N]? ")
         answer = answer.strip()
 
-        if answer.lower() in ["y", "yes"]:
-            return "yes"
-        elif answer.lower() in ["n", "no"]:
-            return "no"
+        if answer.lower() in ["y", "yes", 'switch']:
+            return "switch"
+        elif answer.lower() in ["n", "no", 'stay']:
+            return "stay"
         else:
             print("Sorry, we didn't understand {}".format(answer))
 
 
 
-def players_final_choice(answer, first_choice, remaining_door_id):
+def players_final_choice(player, remaining_door):
 
-    player_choice_id = remaining_door_id if answer == 'yes' else first_choice
+    choice_id = remaining_door.id if player.strategy == 'switch' else first_choice
 
-    return player_choice_id
+    player.door_choice(choice_id)
 
 
-def remaining_door_id(first_choice, goat_id, doors):
+def remaining_door(first_choice, goat, doors):
     for door in doors:
-        if door.id != first_choice and door.id != goat_id:
-            return door.id
+        if door.id != first_choice and door.id != goat.id:
+            return door
         else:
             continue
 
-def get_final_door(players_choice_id, doors):
+def get_final_door(player, doors):
     for door in doors:
-        if door.id == players_choice_id:
-            return door
+        if door.id == player.choice:
+            final_door = actors.Door(door.id, door.prize)
+            return final_door
         else:
             continue
 
