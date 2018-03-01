@@ -8,13 +8,15 @@ class Door():
 
 
 class Player():
-    def __init__(self, name, strategy, num_wins=0):
+    def __init__(self, name, num_wins=0):
         self.name  = name
         self.num_wins = num_wins
-        self.strategy = strategy
 
     def __repr__(self):
-        return "Player {} has won {} games".format(self.name, self.num_wins)
+        return "Player {} has won {} games.".format(self.name, self.num_wins)
+
+    def strategy(self, answer):
+        self.answer = answer
 
     def door_choice(self, choice):
         self.choice = choice

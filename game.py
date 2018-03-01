@@ -21,14 +21,21 @@ def run_main_loop():
     # print header
     print_header()
     #get player name
-    name = get_player_name()
+
+    name = input("What's is your name? ")
+
+    player = actors.Player(name=name)
+
     print("Hello, {}!".format(name))
     #assign doors
     doors = assign_doors()
+
     #ask player to choose a door
     first_choice = get_players_first_choice()
+    player.door_choice(first_choice)
+
     #reveal goat
-    goat_doors = get_goat_doors(first_choice, doors)
+    goat_doors = get_goat_doors(player, doors)
     goats = get_goat(goat_doors, first_choice)
     goat = goats[0]
     print(goat)
@@ -39,10 +46,11 @@ def run_main_loop():
     #ask play if he/she would like to switch
     answer = decide_to_switch()
 
-    player = actors.Player(name, strategy=answer)
+    player.strategy(answer)
 
     #determine players final choice
-    players_final_choice(player, rmn_door)
+    final_choice_id = players_final_choice(player, rmn_door)
+    player.door_choice(final_choice_id)
 
     print("You choice is Door Number {}".format(player.choice))
     final_door = get_final_door(player, doors)
@@ -58,10 +66,6 @@ def print_header():
     print("-------------------------------------")
 
 
-def get_player_name():
-    name = input("What's is your name? ")
-    return name
-
 def assign_doors():
     prizes = ['goat', 'goat', 'prize']
     random.shuffle(prizes)
@@ -72,8 +76,8 @@ def assign_doors():
 
     return [door1, door2, door3]
 
-def get_goat_doors(first_choice, doors):
-    goat_doors = [d for d in doors if d.prize =='goat' and d.id != first_choice]
+def get_goat_doors(player, doors):
+    goat_doors = [d for d in doors if d.prize =='goat' and d.id != player.choice]
 
     return goat_doors
 
@@ -108,9 +112,9 @@ def decide_to_switch():
 
 def players_final_choice(player, remaining_door):
 
-    choice_id = remaining_door.id if player.strategy == 'switch' else first_choice
+    choice_id = remaining_door.id if player.answer == 'switch' else player.choice
 
-    player.door_choice(choice_id)
+    return choice_id
 
 
 def remaining_door(first_choice, goat, doors):
