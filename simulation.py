@@ -1,18 +1,17 @@
 import game
 import actors
 import random
-from statistics import mean
 
 def main():
     print("----------------------------------------------")
     print("        LET'S MAKE A DEAL SIMULATION")
     print("----------------------------------------------")
 
-    n = 1000
+    n = 10000
     player_A, player_B = run_main_loop(n)
 
-    print("Player A won {}% of the time".format(round(player_A.num_wins/n, 4)*100))
-    print("Player B won {}% of the time".format(round(player_B.num_wins/n, 4)*100))
+    print("Player {} won {}% of the time".format(player_A.name, round(player_A.num_wins/n, 4)*100))
+    print("Player {} won {}% of the time".format(player_B.name, round(player_B.num_wins/n, 4)*100))
 
 
 def run_main_loop(n):
@@ -25,23 +24,25 @@ def run_main_loop(n):
         if iter==1:
             player_A_name, player_B_name = get_player_names()
 
-            player_A = actors.Player(player_A_name, strategy="switch")
-            player_B = actors.Player(player_B_name, strategy="stay")
+            player_A = actors.Player(player_A_name)
+            player_A.strategy('switch')
+            player_B = actors.Player(player_A_name)
+            player_B.strategy('stay')
 
 
         #get player's choice
         door_choice_id = choose_door()
 
         #Reveal goat
-        goat_doors = game.get_goat_doors(door_choice_id, doors)
-        goats = game.get_goat(goat_doors, door_choice_id)
+        goats = get_goats(doors, initial_choice=door_choice_id)
+        random.shuffle(goats)
         goat = goats[0]
 
         #get remaining door
-        rmn_door_id = game.remaining_door_id(door_choice_id, goat.id, doors)
+        rmn_door = game.remaining_door(door_choice_id, goat, doors)
 
 
-        player_A.door_choice(rmn_door_id)
+        player_A.door_choice(rmn_door.id)
         player_B.door_choice(door_choice_id)
 
         #get winning door
@@ -66,7 +67,15 @@ def get_player_names():
 
     return player_A_name, player_B_name
 
+def get_goats(doors, initial_choice):
+    goats = []
+    for d in doors:
+        if d.prize == 'goat' and d.id != initial_choice:
+            goats.append(d)
+        else:
+            continue
 
+    return goats
 
 def choose_door():
     door_nums = [1,2,3]
