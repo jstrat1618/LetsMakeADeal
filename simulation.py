@@ -7,11 +7,20 @@ def main():
     print("        LET'S MAKE A DEAL SIMULATION")
     print("----------------------------------------------")
 
-    n = 10000
-    player_A, player_B = run_main_loop(n)
+    run_again = 'y'
 
-    print("Player {} won {}% of the time".format(player_A.name, round(player_A.num_wins/n, 4)*100))
-    print("Player {} won {}% of the time".format(player_B.name, round(player_B.num_wins/n, 4)*100))
+    while run_again.lower() in ['y', 'yes']:
+
+        n = 10000
+        player_A, player_B = run_main_loop(n)
+
+        print("{} won {}% of the time.".format(player_A.name, round(player_A.num_wins/n, 4)*100))
+        print("{} won {}% of the time.".format(player_B.name, round(player_B.num_wins/n, 4)*100))
+        run_again = input("Would you like to run the simulation again? [y/n] ")
+
+        while run_again not in ['y', 'n', 'yes', 'no']:
+            print("Sorry, we didn't understand {}.".format(run_again))
+            run_again = input("Would you like to run the simulation again? [y/n] ")
 
 
 def run_main_loop(n):
@@ -26,7 +35,7 @@ def run_main_loop(n):
 
             player_A = actors.Player(player_A_name)
             player_A.strategy('switch')
-            player_B = actors.Player(player_A_name)
+            player_B = actors.Player(player_B_name)
             player_B.strategy('stay')
 
 
