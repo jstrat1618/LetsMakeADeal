@@ -72,7 +72,7 @@ def run_main_loop(n):
 
 def get_player_names():
     player_A_name = input("For the player who would like to switch, input your name? ")
-    player_B_name = input("For the player who would like to switch, input your name? ")
+    player_B_name = input("For the player who would like to stay, input your name? ")
 
     return player_A_name, player_B_name
 
